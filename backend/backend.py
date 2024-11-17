@@ -202,6 +202,7 @@ def tags():
 def featured():
     stmt = select(Post).order_by(func.random()).limit(1)
     posts = db.session.execute(stmt)
+    # This only returns one result so for loop is just to access the iterator
     for post in posts:
         response = post[0].to_json(DEMO_USER_ID)
     return response
@@ -210,6 +211,8 @@ def featured():
 @app.route("/like/<post_id>", methods=["POST"])
 def like(post_id):
     # Assume user_id is always 1 for this example
+    # Have made the assumption that we want to be able to unlike as well as like to make demoing more functional
+    # as this is the more commonly expected behaviour of a like button in most UIs
     existing_like_query = select(PostLike).where(PostLike.post_id == post_id).where(PostLike.user_id == DEMO_USER_ID)
     already_liked = len(db.session.execute(existing_like_query).all())
     if already_liked:

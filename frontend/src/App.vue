@@ -46,6 +46,7 @@ async function onLikePost(postId) {
       return
     }
     isLikingPostSet.value.add(postId)
+    // Added the UI delay in here to better show handling of isUpdating behaviour
     const [maybeSuccess] = await Promise.all([
       apiRequest(`/like/${postId}`, { method: 'POST'}),
       sleep(250),
@@ -68,6 +69,8 @@ function sleep(duration) {
 function setPosts(rawPosts) {
   posts.value = rawPosts.map(transformPost)
 
+  // Decided to update the featured post at the same time if matching post found
+  // In a real world scenario may be better to recall getFeaturedPost but the expected behaviour was a bit unclear for that endpoint
   if(featuredPost.value?.id){
     const updatedPost = rawPosts.find(post => post.id === featuredPost.value.id)
     if(updatedPost){
